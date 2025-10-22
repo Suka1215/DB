@@ -1,0 +1,38 @@
+# Rider
+.idea/
+
+# Unreal temp files
+Saved/
+Intermediate/
+Binaries/
+
+# Include ONLY Source and Config directories
+/*
+!/Source/
+!/Config/
+!/.gitignore
+!/README.md
+
+# Ignore everything in Source except DawnBlade
+/Source/*
+!/Source/DawnBlade/
+
+# Visual Studio / Rider  
+.vs/
+*.suo
+*.user
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.sln.iml
+
+# Build artifacts
+*.obj
+*.pdb
+*.dll
+*.exe
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
