@@ -3,7 +3,7 @@
 
 #include "Effects/LM/DBGE_DivinePulse.h"
 
-#include "Attributes/DBAttr_Stats.h"
+#include "Attributes/DBAttr_Primary.h"
 
 UDBGE_DivinePulse::UDBGE_DivinePulse()
 {
@@ -12,7 +12,7 @@ UDBGE_DivinePulse::UDBGE_DivinePulse()
 	// HP sacrifice (negative)
 	{
 		FGameplayModifierInfo Mod;
-		Mod.Attribute = UDBAttr_Stats::GetHealthAttribute();
+		Mod.Attribute = UDBAttr_Primary::GetHealthAttribute();
 		Mod.ModifierOp = EGameplayModOp::Additive;
 
 		FSetByCallerFloat SBC;
@@ -25,7 +25,7 @@ UDBGE_DivinePulse::UDBGE_DivinePulse()
 	// MP restore
 	{
 		FGameplayModifierInfo Mod;
-		Mod.Attribute = UDBAttr_Stats::GetManaAttribute();
+		Mod.Attribute = UDBAttr_Primary::GetManaAttribute();
 		Mod.ModifierOp = EGameplayModOp::Additive;
 
 		FSetByCallerFloat SBC;

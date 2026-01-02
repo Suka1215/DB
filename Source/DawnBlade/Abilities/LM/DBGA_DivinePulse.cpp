@@ -3,7 +3,7 @@
 #include "Abilities/LM/DBGA_DivinePulse.h"
 #include "AbilitySystemComponent.h"
 #include "AbilitySystemGlobals.h"
-#include "Attributes/DBAttr_Stats.h"
+#include "Attributes/DBAttr_Primary.h"
 
 UDBGA_DivinePulse::UDBGA_DivinePulse()
 {
@@ -68,7 +68,7 @@ void UDBGA_DivinePulse::ActivateAbility(
     }
 
     // ---- Stats & sacrifice ----
-    const UDBAttr_Stats* CasterStats = ASC->GetSet<UDBAttr_Stats>();
+    const UDBAttr_Primary* CasterStats = ASC->GetSet<UDBAttr_Primary>();
     if (!CasterStats)
     {
         EndAbility(Handle, ActorInfo, ActivationInfo, true, true);

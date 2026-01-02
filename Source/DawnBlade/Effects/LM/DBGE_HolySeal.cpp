@@ -3,14 +3,14 @@
 
 #include "Effects/LM/DBGE_HolySeal.h"
 
-#include "Attributes/DBAttr_Combat.h"
+#include "Attributes/DBAttr_MagicSkills.h"
 
 UDBGE_HolySeal::UDBGE_HolySeal()
 {
 	DurationPolicy = EGameplayEffectDurationType::HasDuration;
 
 	FGameplayModifierInfo Mod;
-	Mod.Attribute = UDBAttr_Combat::GetMagicAttackAttribute(); // boost healing via magic power
+	Mod.Attribute = UDBAttr_MagicSkills::GetDivineMagicSkillAttribute(); // boost healing via magic power
 	Mod.ModifierOp = EGameplayModOp::Additive;
 
 	FSetByCallerFloat SBC;

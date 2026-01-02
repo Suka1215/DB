@@ -3,40 +3,104 @@
 #include "Engine/DataTable.h"  
 #include "EDBActionType.h"
 #include "GameplayTagContainer.h"
+#include "GameplayEffect.h"
 #include "FDBAbilityData.generated.h"
 
 USTRUCT(BlueprintType)
 struct DAWNBLADE_API FDBAbilityData : public FTableRowBase
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
-	// Identity
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) FName			AbilityName;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) EDBActionType	ActionType;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) FGameplayTag	SchoolTag;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) int32			Rank = 1;
+    // ========== IDENTITY ==========
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Identity")
+    FName AbilityName;
+    
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Identity")
+    FText Description;
+    
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Identity")
+    EDBActionType ActionType;
+    
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Identity", meta=(Categories="School"))
+    FGameplayTagContainer SchoolTags;
+    
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Identity")
+    EDBSpellType SpellType = EDBSpellType::None;
+    
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Identity")
+    EDBSpellEffect SpellEffect = EDBSpellEffect::None;
+    
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Identity")
+    int32 Rank = 1;
 
-	// Costs
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) float MPCost	= 0.f;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) float TPCost	= 0.f;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) float HPCost	= 0.f;
+    // ========== COSTS ==========
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Costs")
+    float MPCost = 0.f;
+    
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Costs")
+    float TPCost = 0.f;
+    
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Costs")
+    float HPCost = 0.f;
 
-	// Timings & Targeting
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) float Cooldown		= 0.f;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) float CastTime		= 0.f;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) float Duration		= 0.f;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) float Period		= 0.f;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) float Range			= 0.f;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) float AoeRadius		= 0.f;
+    // ========== TIMING ==========
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Timing")
+    float Cooldown = 0.f;
+    
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Timing")
+    float CastTime = 0.f;
+    
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Timing")
+    float Duration = 0.f;
+    
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Timing")
+    float Period = 0.f;
 
-	// Core effect knobs
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) float Potency     = 0.f;   // heal/damage/buff amount
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) float Multiplier  = 1.f;   // generic extra knob
+    // ========== RANGE & TARGETING ==========
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Range")
+    float Range = 0.f;
+    
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Range")
+    float AoeRadius = 0.f;
 
-	// Scaling (which stat drives it)
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) FGameplayTag ScalingAttribute; // Attributes.MagicAttack, Attributes.Attack, etc.
+    // ========== POWER ==========
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Power")
+    float Potency = 0.f;
+    
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Power")
+    float Multiplier = 1.f;
 
-	// Optional: UI/FX hooks
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) FGameplayTag CooldownTag;  // Cooldown.Shared.Cure
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) FGameplayTag CategoryTag;  // Category.Divine.Healing, etc.
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Power", meta=(Categories="Attributes"))
+    FGameplayTag ScalingAttribute;
+
+    // ========== ANIMATION & VISUALS ========== ← ADD THIS!
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Animation")
+    TSoftObjectPtr<UAnimMontage> AbilityMontage;
+    
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Visuals")
+    TSoftObjectPtr<UParticleSystem> CastVFX;  // VFX during cast
+    
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Visuals")
+    TSoftObjectPtr<UParticleSystem> HitVFX;   // VFX on impact
+    
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Audio")
+    TSoftObjectPtr<USoundBase> CastSound;
+    
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Audio")
+    TSoftObjectPtr<USoundBase> HitSound;
+    
+    // ========== UI ========== ← ADD THIS!
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="UI")
+    TSoftObjectPtr<UTexture2D> Icon;
+    
+    // ========== GAMEPLAY EFFECT ========== ← ADD THIS!
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="GameplayEffect")
+    TSubclassOf<UGameplayEffect> GameplayEffectClass;
+
+    // ========== TAGS ==========
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Tags", meta=(Categories="Cooldown"))
+    FGameplayTag CooldownTag;
+    
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Tags", meta=(Categories="Category"))
+    FGameplayTag CategoryTag;
 };

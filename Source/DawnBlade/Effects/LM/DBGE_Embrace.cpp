@@ -3,14 +3,14 @@
 
 #include "Effects/LM/DBGE_Embrace.h"
 
-#include "Attributes/DBAttr_Stats.h"
+#include "Attributes/DBAttr_Primary.h"
 
 UDBGE_Embrace::UDBGE_Embrace()
 {
 	DurationPolicy = EGameplayEffectDurationType::Instant;
 
 	FGameplayModifierInfo Mod;
-	Mod.Attribute = UDBAttr_Stats::GetHealthAttribute();
+	Mod.Attribute = UDBAttr_Primary::GetHealthAttribute();
 	Mod.ModifierOp = EGameplayModOp::Additive;
 
 	FSetByCallerFloat SBC;

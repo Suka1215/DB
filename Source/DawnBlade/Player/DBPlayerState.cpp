@@ -1,7 +1,7 @@
 #include "Player/DBPlayerState.h"
 #include "AbilitySystemComponent.h"
 #include "GameplayEffect.h"
-#include "Attributes/DBAttr_Stats.h"
+#include "Attributes/DBAttr_Primary.h"
 #include "Attributes/DBAttr_Combat.h"
 
 ADBPlayerState::ADBPlayerState()
@@ -10,7 +10,7 @@ ADBPlayerState::ADBPlayerState()
 	ASC->SetIsReplicated(true);
 	ASC->SetReplicationMode(EGameplayEffectReplicationMode::Mixed);
 
-	AttrStats  = CreateDefaultSubobject<UDBAttr_Stats>(TEXT("AttrStats"));
+	AttrStats  = CreateDefaultSubobject<UDBAttr_Primary>(TEXT("AttrStats"));
 	AttrCombat = CreateDefaultSubobject<UDBAttr_Combat>(TEXT("AttrCombat"));
 }
 

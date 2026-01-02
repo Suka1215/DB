@@ -3,7 +3,7 @@
 
 #include "Effects/LM/DBGE_Grace.h"
 
-#include "Attributes/DBAttr_Stats.h"
+#include "Attributes/DBAttr_Primary.h"
 
 UDBGE_Grace::UDBGE_Grace()
 {
@@ -11,7 +11,7 @@ UDBGE_Grace::UDBGE_Grace()
 	Period = 1.f; // tick interval (overridden in GA)
 
 	FGameplayModifierInfo Mod;
-	Mod.Attribute = UDBAttr_Stats::GetHealthAttribute();
+	Mod.Attribute = UDBAttr_Primary::GetHealthAttribute();
 	Mod.ModifierOp = EGameplayModOp::Additive;
 
 	FSetByCallerFloat SBC;

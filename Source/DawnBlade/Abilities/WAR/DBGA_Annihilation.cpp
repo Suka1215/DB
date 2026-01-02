@@ -1,7 +1,7 @@
 #include "Abilities/WAR/DBGA_Annihilation.h"
 #include "AbilitySystemComponent.h"
 #include "AbilitySystemGlobals.h"
-#include "Attributes/DBAttr_Stats.h"
+#include "Attributes/DBAttr_Combat.h"
 #include "GameFramework/Character.h"
 
 UDBGA_Annihilation::UDBGA_Annihilation()
@@ -24,7 +24,7 @@ void UDBGA_Annihilation::ActivateAbility(const FGameplayAbilitySpecHandle Handle
     if (!C || !ASC || !GE_PhysDamage) { EndAbility(Handle, Info, ActivationInfo, true, true); return; }
 
     // Read & spend all TP
-    const float TP = ASC->GetNumericAttribute(UDBAttr_Stats::GetTPAttribute());
+    const float TP = ASC->GetNumericAttribute(UDBAttr_Combat::GetTPAttribute());
     if (GE_TPDelta && TP > 0.f)
     {
         FGameplayEffectSpecHandle TPSpend = ASC->MakeOutgoingSpec(GE_TPDelta, 1.f, ASC->MakeEffectContext());

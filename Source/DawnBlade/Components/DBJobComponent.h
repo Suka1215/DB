@@ -1,11 +1,80 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Net/UnrealNetwork.h"
 #include "Components/ActorComponent.h"
 #include "Types/EDBJob.h"
+#include "Types/DBEquipmentItemData.h"
 #include "Engine/DataTable.h"
 #include "DBJobComponent.generated.h"
+
+class UDBWeaponAnimationSet;
+class UDBEquipmentItemData;
+
+USTRUCT(BlueprintType)
+struct FJobStartingGear
+{
+    GENERATED_BODY()
+
+    // Weapons
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapons")
+    TSoftObjectPtr<UDBEquipmentItemData> MainHandItem;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapons")
+    TSoftObjectPtr<UDBEquipmentItemData> OffHandItem;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapons")
+    TSoftObjectPtr<UDBEquipmentItemData> RangedItem;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapons")
+    TSoftObjectPtr<UDBEquipmentItemData> AmmoItem;
+
+    // Armor
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Armor")
+    TSoftObjectPtr<UDBEquipmentItemData> HeadItem;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Armor")
+    TSoftObjectPtr<UDBEquipmentItemData> BodyItem;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Armor")
+    TSoftObjectPtr<UDBEquipmentItemData> HandsItem;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Armor")
+    TSoftObjectPtr<UDBEquipmentItemData> LegsItem;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Armor")
+    TSoftObjectPtr<UDBEquipmentItemData> FeetItem;
+
+    // Accessories
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Accessories")
+    TSoftObjectPtr<UDBEquipmentItemData> BackItem;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Accessories")
+    TSoftObjectPtr<UDBEquipmentItemData> WaistItem;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Accessories")
+    TSoftObjectPtr<UDBEquipmentItemData> NeckItem;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Accessories")
+    TSoftObjectPtr<UDBEquipmentItemData> Ring1Item;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Accessories")
+    TSoftObjectPtr<UDBEquipmentItemData> Ring2Item;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Accessories")
+    TSoftObjectPtr<UDBEquipmentItemData> Earring1Item;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Accessories")
+    TSoftObjectPtr<UDBEquipmentItemData> Earring2Item;
+};
+
+USTRUCT(BlueprintType)
+struct FJobEquippedGear
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	TMap<EEquipmentSlot, UDBEquipmentItemData*> EquippedItems;
+};
 
 // ===== Grant record =====
 USTRUCT(BlueprintType)
@@ -43,13 +112,11 @@ class DAWNBLADE_API UDBJobComponent : public UActorComponent
 public:
 	UDBJobComponent();
 
-	// Current job + level
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="DB|Job", ReplicatedUsing=OnRep_CurrentJob)
-	EDBJob CurrentJob = EDBJob::None;
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="DB|Job", ReplicatedUsing=OnRep_Level)
 	int32 Level = 1;
-
+	
 	// Catalog of potential abilities by job
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="DB|Job|Catalog")
 	TMap<EDBJob, FDBGrantedAbilityArray> GrantsByJob;
@@ -69,9 +136,35 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="DB|Job|Catalog")
 	bool bAutoBuildCatalogFromTable = false;
 
+	/** Generic ABP used when disengaged (normal movement) */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Job|Animation")
+	TSubclassOf<UAnimInstance> GenericAnimationBlueprint;
+
+	// Map of job to animation blueprint
+	UPROPERTY(EditDefaultsOnly, Category = "Job|Animation")
+	TMap<EDBJob, TSubclassOf<UAnimInstance>> JobAnimationBlueprints;
+    
+	/** Switch animation blueprint based on job and combat state */
+	UFUNCTION(BlueprintCallable, Category = "Job|Animation")
+	void SetAnimationBlueprintForJob(EDBJob Job, bool bCombatStance);
+    
+	/** Get the body mesh component (for modular metahuman characters) */
+	UFUNCTION(BlueprintCallable, Category = "Job|Animation")
+	USkeletalMeshComponent* GetBodyMeshComponent() const;
+
+	UFUNCTION(BlueprintPure, Category = "Job")
+	bool CanUseWeaponType(UDBWeaponAnimationSet* WeaponData) const;
+
+	UFUNCTION(BlueprintPure, Category = "Job")
+	TArray<FGameplayTag> GetAllowedWeaponCategories() const;
+
+	UFUNCTION(BlueprintPure, Category = "Job")
+	UDBWeaponAnimationSet* GetDefaultWeaponForJob() const;
+
 	// ===== API =====
 	UFUNCTION(BlueprintCallable, Category="DB|Job") EDBJob GetCurrentJob() const { return CurrentJob; }
 	UFUNCTION(BlueprintCallable, Category="DB|Job") int32 GetLevel() const { return Level; }
+	UFUNCTION(BlueprintCallable, Category = "Job") void SetJob(EDBJob NewJob);
 
 	// Server authoritative setters
 	UFUNCTION(BlueprintCallable, Server, Reliable, Category="DB|Job")
@@ -89,7 +182,7 @@ public:
 
 	UFUNCTION(Server, Reliable)
 	void ServerRebuildGrants();
-
+	
 	// Runtime calls
 	UFUNCTION(BlueprintCallable, Category="DB|Job") void RebuildActiveGrants();
 	UFUNCTION(BlueprintCallable, Category="DB|Job|Books") void LearnAbilityBook(TSubclassOf<class UGameplayAbility> Ability);
@@ -105,9 +198,31 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
-	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+	// Current job
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="DB|Job", ReplicatedUsing=OnRep_CurrentJob)
+	EDBJob CurrentJob = EDBJob::None;
+    
+	// Subjob
+	UPROPERTY(BlueprintReadOnly, Category = "DB|Job", Replicated)
+	EDBJob SubJob = EDBJob::None;
 
 	// RepNotifies
 	UFUNCTION() void OnRep_CurrentJob();
 	UFUNCTION() void OnRep_Level();
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Job|Starting Gear")
+	TMap<EDBJob, FJobStartingGear> JobStartingGear;
+
+	// Runtime: Remember what's equipped per job (for job switching)
+	UPROPERTY()
+	TMap<EDBJob, FJobEquippedGear> SavedJobGear;
+
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Job|Weapons")
+	TMap<EDBJob, TSoftObjectPtr<UDBWeaponAnimationSet>> JobDefaultWeapons;
+private:
+	void EquipStartingGear();
+	void SaveCurrentGear();
+	void RestoreSavedGear();
 };

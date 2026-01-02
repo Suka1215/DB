@@ -22,7 +22,8 @@
 #include "Components/UniformGridPanel.h"
 #include "Components/PanelWidget.h"
 
-#include "Attributes/DBAttr_Stats.h"
+#include "Attributes/DBAttr_Primary.h"
+#include "Attributes/DBAttr_Combat.h"
 #include "Engine/TextureRenderTarget2D.h"
 #include "Runtime/AdvancedWidgets/Public/Components/RadialSlider.h"
 
@@ -155,31 +156,31 @@ void UDBW_GameHUD::BindAttributes()
 	if (!ASC.IsValid()) return;
 
 	// Health
-	HealthDH = ASC->GetGameplayAttributeValueChangeDelegate(UDBAttr_Stats::GetHealthAttribute())
+	HealthDH = ASC->GetGameplayAttributeValueChangeDelegate(UDBAttr_Primary::GetHealthAttribute())
 		.AddUObject(this, &UDBW_GameHUD::OnHealthChanged);
 	
-	MaxHealthDH = ASC->GetGameplayAttributeValueChangeDelegate(UDBAttr_Stats::GetMaxHealthAttribute())
+	MaxHealthDH = ASC->GetGameplayAttributeValueChangeDelegate(UDBAttr_Primary::GetMaxHealthAttribute())
 		.AddUObject(this, &UDBW_GameHUD::OnHealthChanged);
 	
 	// Mana
-	ManaDH = ASC->GetGameplayAttributeValueChangeDelegate(UDBAttr_Stats::GetManaAttribute())
+	ManaDH = ASC->GetGameplayAttributeValueChangeDelegate(UDBAttr_Primary::GetManaAttribute())
 		.AddUObject(this, &UDBW_GameHUD::OnManaChanged);
 
-	MaxManaDH = ASC->GetGameplayAttributeValueChangeDelegate(UDBAttr_Stats::GetMaxManaAttribute())
+	MaxManaDH = ASC->GetGameplayAttributeValueChangeDelegate(UDBAttr_Primary::GetMaxManaAttribute())
 		.AddUObject(this, &UDBW_GameHUD::OnManaChanged);
 
-	TPDH = ASC->GetGameplayAttributeValueChangeDelegate(UDBAttr_Stats::GetTPAttribute())
+	TPDH = ASC->GetGameplayAttributeValueChangeDelegate(UDBAttr_Combat::GetTPAttribute())
 		.AddUObject(this, &UDBW_GameHUD::OnTpChanged);
 
 	// initial paint
 	if (ASC.IsValid())
 	{
-		const float HP   = ASC->GetNumericAttribute(UDBAttr_Stats::GetHealthAttribute());
-		const float HPMax= ASC->GetNumericAttribute(UDBAttr_Stats::GetMaxHealthAttribute());
-		const float MP   = ASC->GetNumericAttribute(UDBAttr_Stats::GetManaAttribute());
-		const float MPMax= ASC->GetNumericAttribute(UDBAttr_Stats::GetMaxManaAttribute());
-		const float TP = ASC->GetNumericAttribute(UDBAttr_Stats::GetTPAttribute());
-		const float TPMax = ASC->GetNumericAttribute(UDBAttr_Stats::GetMaxTPAttribute());
+		const float HP   = ASC->GetNumericAttribute(UDBAttr_Primary::GetHealthAttribute());
+		const float HPMax= ASC->GetNumericAttribute(UDBAttr_Primary::GetMaxHealthAttribute());
+		const float MP   = ASC->GetNumericAttribute(UDBAttr_Primary::GetManaAttribute());
+		const float MPMax= ASC->GetNumericAttribute(UDBAttr_Primary::GetMaxManaAttribute());
+		const float TP = ASC->GetNumericAttribute(UDBAttr_Combat::GetTPAttribute());
+		const float TPMax = ASC->GetNumericAttribute(UDBAttr_Combat::GetMaxTPAttribute());
 
 		DisplayedHP = HP;
 		TargetHP    = HP;
@@ -228,19 +229,19 @@ void UDBW_GameHUD::BindAttributes()
 void UDBW_GameHUD::UnbindAttributes()
 {
 	if (!ASC.IsValid()) return;
-	if (HealthDH.IsValid()) { ASC->GetGameplayAttributeValueChangeDelegate(UDBAttr_Stats::GetHealthAttribute()).Remove(HealthDH); HealthDH.Reset(); }
-	if (MaxHealthDH.IsValid()) { ASC->GetGameplayAttributeValueChangeDelegate(UDBAttr_Stats::GetMaxHealthAttribute()).Remove(MaxHealthDH); MaxHealthDH.Reset(); }
-	if (MaxManaDH.IsValid()) { ASC->GetGameplayAttributeValueChangeDelegate(UDBAttr_Stats::GetMaxManaAttribute()).Remove(MaxManaDH); MaxManaDH.Reset(); }
-	if (ManaDH.IsValid())   { ASC->GetGameplayAttributeValueChangeDelegate(UDBAttr_Stats::GetManaAttribute()).Remove(ManaDH); ManaDH.Reset(); }
-	if (TPDH.IsValid()) { ASC->GetGameplayAttributeValueChangeDelegate(UDBAttr_Stats::GetTPAttribute()).Remove(TPDH); TPDH.Reset(); }
-	if (MaxTPDH.IsValid()) { ASC->GetGameplayAttributeValueChangeDelegate(UDBAttr_Stats::GetMaxTPAttribute()).Remove(MaxTPDH); MaxTPDH.Reset(); }
+	if (HealthDH.IsValid()) { ASC->GetGameplayAttributeValueChangeDelegate(UDBAttr_Primary::GetHealthAttribute()).Remove(HealthDH); HealthDH.Reset(); }
+	if (MaxHealthDH.IsValid()) { ASC->GetGameplayAttributeValueChangeDelegate(UDBAttr_Primary::GetMaxHealthAttribute()).Remove(MaxHealthDH); MaxHealthDH.Reset(); }
+	if (MaxManaDH.IsValid()) { ASC->GetGameplayAttributeValueChangeDelegate(UDBAttr_Primary::GetMaxManaAttribute()).Remove(MaxManaDH); MaxManaDH.Reset(); }
+	if (ManaDH.IsValid())   { ASC->GetGameplayAttributeValueChangeDelegate(UDBAttr_Primary::GetManaAttribute()).Remove(ManaDH); ManaDH.Reset(); }
+	if (TPDH.IsValid()) { ASC->GetGameplayAttributeValueChangeDelegate(UDBAttr_Combat::GetTPAttribute()).Remove(TPDH); TPDH.Reset(); }
+	if (MaxTPDH.IsValid()) { ASC->GetGameplayAttributeValueChangeDelegate(UDBAttr_Combat::GetMaxTPAttribute()).Remove(MaxTPDH); MaxTPDH.Reset(); }
 }
 
 void UDBW_GameHUD::OnHealthChanged(const FOnAttributeChangeData& Data)
 {
 	if (HPBar)
 	{
-		const float Max     = ASC.IsValid() ? ASC->GetNumericAttribute(UDBAttr_Stats::GetMaxHealthAttribute()) : 0.f;
+		const float Max     = ASC.IsValid() ? ASC->GetNumericAttribute(UDBAttr_Primary::GetMaxHealthAttribute()) : 0.f;
 		const float Current = Data.NewValue;
 		const float Percent = Max > 0 ? Current / Max : 0.f;
 
@@ -272,7 +273,7 @@ void UDBW_GameHUD::OnManaChanged(const FOnAttributeChangeData& Data)
 {
 	if (MPBar)
 	{
-		const float Max     = ASC.IsValid() ? ASC->GetNumericAttribute(UDBAttr_Stats::GetMaxManaAttribute()) : 0.f;
+		const float Max     = ASC.IsValid() ? ASC->GetNumericAttribute(UDBAttr_Primary::GetMaxManaAttribute()) : 0.f;
 		const float Current = Data.NewValue;
 		const float Percent = Max > 0 ? Current / Max : 0.f;
 
@@ -304,7 +305,7 @@ void UDBW_GameHUD::OnTpChanged(const FOnAttributeChangeData& Data)
 {
 	if (TPBar)
 	{
-		const float Max     = ASC.IsValid() ? ASC->GetNumericAttribute(UDBAttr_Stats::GetMaxTPAttribute()) : 0.f;
+		const float Max     = ASC.IsValid() ? ASC->GetNumericAttribute(UDBAttr_Combat::GetMaxTPAttribute()) : 0.f;
 		const float Current = Data.NewValue;
 		const float Percent = Max > 0 ? Current / Max : 0.f;
 

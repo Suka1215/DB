@@ -5,14 +5,14 @@
 
 #include "GameplayEffectExecutionCalculation.h"
 #include "GameplayEffectExtension.h"
-#include "Attributes/DBAttr_Stats.h"
+#include "Attributes/DBAttr_Primary.h"
 
 UDBGE_MPDelta::UDBGE_MPDelta()
 {
 	DurationPolicy = EGameplayEffectDurationType::Instant;
 
 	FGameplayModifierInfo MpMod;
-	MpMod.Attribute = UDBAttr_Stats::GetManaAttribute();
+	MpMod.Attribute = UDBAttr_Primary::GetManaAttribute();
 	MpMod.ModifierOp = EGameplayModOp::Additive;
 	MpMod.ModifierMagnitude = FScalableFloat(0.f);
 

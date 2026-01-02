@@ -79,7 +79,7 @@ float UDBGA_Cure::GetJobHealingMultiplier(const AActor* Caster) const
 {
 	if (const UDBJobComponent* JobComp = Caster->FindComponentByClass<UDBJobComponent>())
 	{
-		switch (JobComp->CurrentJob)
+		switch (JobComp->GetCurrentJob())
 		{
 		case EDBJob::LightMage: return 1.0f;
 		case EDBJob::Paladin:   return 0.7f;

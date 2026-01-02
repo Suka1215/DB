@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "AbilitySystemInterface.h"
+#include "DBCharacterBase.h"
 #include "GameplayAbilitySpecHandle.h"
 #include "DBPlayerCharacter.generated.h"
 
@@ -18,7 +19,7 @@ class UInputMappingContext;
 struct FInputActionValue;
 
 UCLASS()
-class DAWNBLADE_API ADBPlayerCharacter : public ACharacter, public IAbilitySystemInterface
+class DAWNBLADE_API ADBPlayerCharacter : public ADBCharacterBase
 {
     GENERATED_BODY()
 

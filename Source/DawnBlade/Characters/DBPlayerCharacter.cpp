@@ -16,6 +16,8 @@
 
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "AbilitySystemInterface.h"
+#include "AbilitySystemComponent.h"
 #include "InputActionValue.h"
 #include "InputMappingContext.h"
 
@@ -27,35 +29,27 @@ ADBPlayerCharacter::ADBPlayerCharacter()
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 
 	// Don't rotate character with controller - let camera control rotation
-	bUseControllerRotationPitch = false;
-	bUseControllerRotationYaw = false;
-	bUseControllerRotationRoll = false;
+	// bUseControllerRotationPitch = false;
+	// bUseControllerRotationYaw = false;
+	// bUseControllerRotationRoll = false;
 
 	// Configure character movement
-	GetCharacterMovement()->bOrientRotationToMovement = true; // Character moves in direction of input
-	GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.0f, 0.0f); // Smooth rotation
-	GetCharacterMovement()->JumpZVelocity = 600.f;
-	GetCharacterMovement()->AirControl = 0.2f;
-	GetCharacterMovement()->MaxWalkSpeed = 500.f;
-	GetCharacterMovement()->MinAnalogWalkSpeed = 20.f;
-	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
-	GetCharacterMovement()->BrakingDecelerationFalling = 1500.0f;
 
 	// Create Camera Boom (pulls in towards character if there is a collision)
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
 	CameraBoom->TargetArmLength = 300.f; // Camera follows at this distance
 	CameraBoom->bUsePawnControlRotation = true; // Rotate arm based on controller
-	CameraBoom->bInheritPitch = true;
-	CameraBoom->bInheritYaw = true;
-	CameraBoom->bInheritRoll = false;
+	// CameraBoom->bInheritPitch = true;
+	// CameraBoom->bInheritYaw = true;
+	// CameraBoom->bInheritRoll = false;
 
 	// Enable camera collision for AAA feel
-	CameraBoom->bDoCollisionTest = true;
-	CameraBoom->bEnableCameraLag = true; // Smooth camera movement
-	CameraBoom->CameraLagSpeed = 10.0f;
-	CameraBoom->bEnableCameraRotationLag = true;
-	CameraBoom->CameraRotationLagSpeed = 10.0f;
+	// CameraBoom->bDoCollisionTest = true;
+	// CameraBoom->bEnableCameraLag = true; // Smooth camera movement
+	// CameraBoom->CameraLagSpeed = 10.0f;
+	// CameraBoom->bEnableCameraRotationLag = true;
+	// CameraBoom->CameraRotationLagSpeed = 10.0f;
 	
 	// Set socket offset for over-the-shoulder view
 	CameraBoom->SocketOffset = FVector(0.f, 50.f, 70.f); // Right and up offset
@@ -197,37 +191,26 @@ void ADBPlayerCharacter::Look(const FInputActionValue& Value)
 {
 	FVector2D LookAxisVector = Value.Get<FVector2D>();
 
-	// LOG EVERY TIME THIS IS CALLED
-	UE_LOG(LogTemp, Warning, TEXT("Look called! X: %f, Y: %f"), LookAxisVector.X, LookAxisVector.Y);
+	// Dead zone - ignore small inputs (stick drift)
+	const float DeadZone = 0.15f;
+	if (LookAxisVector.Size() < DeadZone)
+	{
+		return;
+	}
 
 	if (Controller != nullptr)
 	{
-		// Apply sensitivity
 		LookAxisVector.X *= MouseSensitivity;
 		LookAxisVector.Y *= MouseSensitivity;
 
-		// Add yaw and pitch input to controller
 		AddControllerYawInput(LookAxisVector.X);
 		AddControllerPitchInput(LookAxisVector.Y);
-		
-		UE_LOG(LogTemp, Warning, TEXT("Applied look input - Controller Rotation: %s"), 
-			*Controller->GetControlRotation().ToString());
-	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("Look called but Controller is NULL!"));
 	}
 }
 
 void ADBPlayerCharacter::Move(const FInputActionValue& Value)
 {
 	const FVector2D MovementVector = Value.Get<FVector2D>();
-
-	// DEBUG: See what input we're receiving
-	if (MovementVector.X != 0 || MovementVector.Y != 0)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Move Input: X=%f, Y=%f"), MovementVector.X, MovementVector.Y);
-	}
 
 	if (Controller != nullptr)
 	{

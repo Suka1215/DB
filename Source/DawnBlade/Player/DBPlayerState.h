@@ -10,7 +10,7 @@
 
 
 class UDBAbilitySystemComponent;
-class UDBAttr_Stats;
+class UDBAttr_Primary;
 class UDBAttr_Combat;
 
 /**
@@ -25,7 +25,7 @@ public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override { return ASC; }
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly) UDBAbilitySystemComponent* ASC;
-	UPROPERTY() UDBAttr_Stats*  AttrStats;
+	UPROPERTY() UDBAttr_Primary*  AttrStats;
 	UPROPERTY() UDBAttr_Combat* AttrCombat;
 
 	UPROPERTY(EditDefaultsOnly, Category="GAS|Startup")

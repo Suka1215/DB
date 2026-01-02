@@ -3,14 +3,14 @@
 
 #include "Effects/LM/DBGE_MysticBoon.h"
 
-#include "Attributes/DBAttr_Combat.h"
+#include "Attributes/DBAttr_MagicSkills.h"
 
 UDBGE_MysticBoon::UDBGE_MysticBoon()
 {
 	DurationPolicy = EGameplayEffectDurationType::Infinite;
 
 	FGameplayModifierInfo Mod;
-	Mod.Attribute = UDBAttr_Combat::GetMagicAttackAttribute();
+	Mod.Attribute = UDBAttr_MagicSkills::GetDivineMagicSkillAttribute();
 	Mod.ModifierOp = EGameplayModOp::Additive;
 
 	FSetByCallerFloat SBC;

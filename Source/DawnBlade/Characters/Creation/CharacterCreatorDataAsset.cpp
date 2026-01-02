@@ -239,16 +239,7 @@ void UCharacterCreatorDataAsset::PopulateDefaultHairPresets()
     Preset.bRequiresPremium = false;
     Preset.HairAttachment.HairMesh = nullptr; // assign later
     Preset.HairAttachment.HairMaterial = nullptr; // assign later
-
-    if (!Preset.HairAttachment.GroomAsset.IsValid())
-    {
-        UE_LOG(LogTemp, Error, TEXT("HairPreset %s has invalid Groom!"), *Preset.DisplayName.ToString());
-    }
-    if (!Preset.PreviewThumbnail)
-    {
-        UE_LOG(LogTemp, Error, TEXT("HairPreset %s has no thumbnail!"), *Preset.DisplayName.ToString());
-    }
-
+    
     HairPresets.Add(Preset);
 }
 

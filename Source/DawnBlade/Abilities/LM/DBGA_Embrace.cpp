@@ -3,7 +3,7 @@
 #include "Abilities/LM/DBGA_Embrace.h"
 #include "AbilitySystemComponent.h"
 #include "AbilitySystemGlobals.h"
-#include "Attributes/DBAttr_Stats.h"
+#include "Attributes/DBAttr_Primary.h"
 
 UDBGA_Embrace::UDBGA_Embrace()
 {
@@ -112,7 +112,7 @@ bool UDBGA_Embrace::IsTargetDeadOrUnconscious(AActor* Target) const
         return false;
     }
 
-    const UDBAttr_Stats* TargetStats = TargetASC->GetSet<UDBAttr_Stats>();
+    const UDBAttr_Primary* TargetStats = TargetASC->GetSet<UDBAttr_Primary>();
     if (!TargetStats)
     {
         return false;
@@ -135,7 +135,7 @@ float UDBGA_Embrace::CalculateRevivalHP(AActor* Target) const
         return 0.f;
     }
 
-    const UDBAttr_Stats* TargetStats = TargetASC->GetSet<UDBAttr_Stats>();
+    const UDBAttr_Primary* TargetStats = TargetASC->GetSet<UDBAttr_Primary>();
     if (!TargetStats)
     {
         return 0.f;

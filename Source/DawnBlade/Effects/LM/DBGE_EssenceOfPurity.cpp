@@ -3,7 +3,7 @@
 
 #include "Effects/LM/DBGE_EssenceOfPurity.h"
 
-#include "Attributes/DBAttr_Stats.h"
+#include "Attributes/DBAttr_Primary.h"
 
 UDBGE_EssenceOfPurity::UDBGE_EssenceOfPurity()
 {
@@ -11,7 +11,7 @@ UDBGE_EssenceOfPurity::UDBGE_EssenceOfPurity()
 
 	// Optional: small heal on cleanse
 	FGameplayModifierInfo Mod;
-	Mod.Attribute = UDBAttr_Stats::GetHealthAttribute();
+	Mod.Attribute = UDBAttr_Primary::GetHealthAttribute();
 	Mod.ModifierOp = EGameplayModOp::Additive;
 
 	FSetByCallerFloat SBC;

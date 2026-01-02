@@ -4,7 +4,7 @@
 
 #include "GameplayTagContainer.h"      // FGameplayTag
 #include "GameplayEffectTypes.h"       // FSetByCallerFloat, FGameplayModifierInfo
-#include "Attributes/DBAttr_Stats.h"   // UDBAttr_Stats::GetHealthAttribute()
+#include "Attributes/DBAttr_Primary.h"   // UDBAttr_Primary::GetHealthAttribute()
 
 UDBGE_Cure::UDBGE_Cure()
 {
@@ -13,7 +13,7 @@ UDBGE_Cure::UDBGE_Cure()
 
 	// Single modifier: add to Health using a SetByCaller magnitude
 	FGameplayModifierInfo HealMod;
-	HealMod.Attribute  = UDBAttr_Stats::GetHealthAttribute();
+	HealMod.Attribute  = UDBAttr_Primary::GetHealthAttribute();
 	HealMod.ModifierOp = EGameplayModOp::Additive;
 
 	// The actual heal amount is supplied by the GA:
